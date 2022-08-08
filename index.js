@@ -26,3 +26,48 @@ const port = 3000;
 app.listen(port, () => {
   console.log(`listening on ${port}`);
 });
+
+// syncronous & asynocronous practices
+/* 
+//callbacks
+// promises
+// async-await
+*/
+
+// console.log("before");
+// getUser(1, (user) => {
+//   console.table(user);
+//   // repositories callback
+//   getRepositories("name", (repo) => {
+//     console.log(repo);
+//   });
+// });
+// console.log("after");
+
+getUser(1)
+  .then((user) => getRepositories(user.gitHubUserName))
+  .then((data) => console.log(data))
+  .catch((error) => console.log("error"));
+
+function getUser(id) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      console.log("reading user from database");
+      resolve({ id: id, gitHubUserName: "jo" });
+    }, 0);
+  });
+}
+
+function getRepositories(userName) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(["repo1", "repo2", "repo3"]);
+    }, 0);
+  });
+}
+
+// const promise = new Promise((resolve, reject) => {
+//   resolve("promise resolved");
+// });
+
+// promise.then((data) => console.log(data));
