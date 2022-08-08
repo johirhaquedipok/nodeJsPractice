@@ -44,10 +44,10 @@ app.listen(port, () => {
 // });
 // console.log("after");
 
-getUser(1)
+/* getUser(1)
   .then((user) => getRepositories(user.gitHubUserName))
   .then((data) => console.log(data))
-  .catch((error) => console.log("error"));
+  .catch((error) => console.log("error")); */
 
 function getUser(id) {
   return new Promise((resolve, reject) => {
@@ -71,3 +71,29 @@ function getRepositories(userName) {
 // });
 
 // promise.then((data) => console.log(data));
+
+// const p = Promise.reject(new Error("reason for rejection"));
+// p.catch((error) => console.log(error));
+/* 
+promise.all([p1,p2]).then(result => console.log(result)).then(err => console.log(error))
+if any promise returns error promise.all will retur error
+
+*/
+/* 
+Promise.race([p1,p2])
+
+executes the promise when the first promise is resoled
+*/
+
+/* Async & Await */
+async function getUserRepositories() {
+  try {
+    const user = await getUser(1);
+    const userRepo = await getRepositories(user.name);
+    console.log(userRepo);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+getUserRepositories();
