@@ -4,17 +4,54 @@ const Joi = require("joi");
 const express = require("express");
 const app = express();
 
+app.use(express.json());
+app.use(express.static("public"));
+
 mongoose
   .connect("mongodb://localhost/playground")
   .then(() => console.log("connected to monogo db"))
   .then((error) => console.log(error));
 
+// create schema with the help of mongoose
+const courseSchema = new mongoose.Schema({
+  name: String,
+  author: String,
+  tags: [String],
+  date: { type: Date, default: Date.now },
+  isPublished: Boolean,
+});
+
+// mongoose model
+const Course = mongoose.model("Course", courseSchema);
+
+async function createCourse() {
+  const course = new Course({
+    name: "Angular Course",
+    author: "Jo",
+    tags: ["Angular", "Frontend"],
+    isPublished: "true",
+  });
+
+  const result = await course.save();
+  console.log(result);
+}
+
+// createCourse();
+
+async function getCourse() {
+  const result = await Course.find({ author: "Jo", isPublished: true })
+    .limit(10)
+    .sort({ name: 1 })
+    .select({ name: 1, tags: 1 });
+  console.log(result);
+}
+
+getCourse();
+
 // import the routes
 const genres = require("./routes/api/genres");
 const home = require("./routes/home/home");
 
-app.use(express.json());
-app.use(express.static("public"));
 app.use("/", home);
 app.use("/api/genres", genres);
 // use template engine
@@ -32,74 +69,3 @@ const port = 3000;
 app.listen(port, () => {
   console.log(`listening on ${port}`);
 });
-
-// syncronous & asynocronous practices
-/* 
-//callbacks
-// promises
-// async-await
-*/
-
-// console.log("before");
-// getUser(1, (user) => {
-//   console.table(user);
-//   // repositories callback
-//   getRepositories("name", (repo) => {
-//     console.log(repo);
-//   });
-// });
-// console.log("after");
-
-/* getUser(1)
-  .then((user) => getRepositories(user.gitHubUserName))
-  .then((data) => console.log(data))
-  .catch((error) => console.log("error")); */
-
-function getUser(id) {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      console.log("reading user from database");
-      resolve({ id: id, gitHubUserName: "jo" });
-    }, 0);
-  });
-}
-
-function getRepositories(userName) {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve(["repo1", "repo2", "repo3"]);
-    }, 0);
-  });
-}
-
-// const promise = new Promise((resolve, reject) => {
-//   resolve("promise resolved");
-// });
-
-// promise.then((data) => console.log(data));
-
-// const p = Promise.reject(new Error("reason for rejection"));
-// p.catch((error) => console.log(error));
-/* 
-promise.all([p1,p2]).then(result => console.log(result)).then(err => console.log(error))
-if any promise returns error promise.all will retur error
-
-*/
-/* 
-Promise.race([p1,p2])
-
-executes the promise when the first promise is resoled
-*/
-
-/* Async & Await */
-async function getUserRepositories() {
-  try {
-    const user = await getUser(1);
-    const userRepo = await getRepositories(user.name);
-    console.log(userRepo);
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-getUserRepositories();
