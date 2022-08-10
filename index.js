@@ -1,7 +1,13 @@
+const mongoose = require("mongoose");
 const morgan = require("morgan");
 const Joi = require("joi");
 const express = require("express");
 const app = express();
+
+mongoose
+  .connect("mongodb://localhost/playground")
+  .then(() => console.log("connected to monogo db"))
+  .then((error) => console.log(error));
 
 // import the routes
 const genres = require("./routes/api/genres");
