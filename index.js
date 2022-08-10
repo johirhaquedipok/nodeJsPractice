@@ -38,7 +38,47 @@ async function createCourse() {
 
 // createCourse();
 
+// find data from the database
 async function getCourse() {
+  /* comparision operator
+    *eq(equal)
+    *ne(not equal)
+    *gt(greater than)
+    *gte(greater than or equal)
+    *lt(less than)
+    *lte(less than or equla)
+    *in(less than or equla)
+    *nin(not in)
+
+  */
+
+  /* 
+    or and and method query data from db
+    *or 
+    *and
+    */
+
+  /* 
+    pattern
+
+    --- find anything that starts with the word.
+    find({/^word/ })
+
+    --- find anything that ends with the word.(case sensitive)
+    find({/word$/ })
+
+    --- find anything that ends with the word.(case insensitive)
+    find({/word$/i })
+
+    --- find any word that contains the word anywhere.(case sensitive)
+    find({author: /.*word*./})
+
+    --- find any word that contains the word anywhere.(case insensitive)
+    find({author: /.*word*./i})
+    */
+  /* count()
+    return only number of documents that are matched with the queries
+   */
   const result = await Course.find({ author: "Jo", isPublished: true })
     .limit(10)
     .sort({ name: 1 })
