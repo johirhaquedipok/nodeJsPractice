@@ -79,14 +79,69 @@ async function getCourse() {
   /* count()
     return only number of documents that are matched with the queries
    */
-  const result = await Course.find({ author: "Jo", isPublished: true })
-    .limit(10)
-    .sort({ name: 1 })
-    .select({ name: 1, tags: 1 });
+  /* 
+  for pagination
+  skip()
+    limit()
+  */
+ 
+/* async function getCourse() {
+  return await Course.find({
+    isPublished: true,
+    tags: { $in: ["frontend", "backend"] },
+  })
+    .sort({ price: -1 })
+    .select({ name: 1, author: 1, price: 1 });
+} */
+async function getCourse() {
+  // using or operand
+  return await Course.find({
+    isPublished: true,
+  })
+    .or([{ price: { $gte: 15 } }, { name: /.*by*./i }])
+    .sort("-price")
+    .select({ name: 1, author: 1, price: 1 });
+}
+
+/* update a document */
+async function updateCourse(id) {
+  /* 
+  // method 1
+  const course = await Course.findById(id);
+
+  if (!course) return;
+  course.isPublished = true;
+  course.author = "another author";
+  // another appraoch to updat a in db
+  // course.set({isPublished: true,author = 'another author' })
+  const result = await course.save();
+  console.log(result); */
+
+  //method 2
+  const result = await Course.findByIdAndUpdate(
+    { _id: id },
+    {
+      $set: {
+        author: "Mosh",
+        isPublished: true,
+      },
+    },
+    { new: true }
+  );
   console.log(result);
 }
 
-getCourse();
+updateCourse("62f54dde19890424a2c73b7b");
+
+/* async function run() {
+  const courses = await getCourse();
+  console.log(courses);
+} */
+
+// run();
+
+
+
 
 // import the routes
 const genres = require("./routes/api/genres");
