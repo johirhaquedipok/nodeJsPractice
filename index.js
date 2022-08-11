@@ -8,17 +8,33 @@ app.use(express.json());
 app.use(express.static("public"));
 
 mongoose
-  .connect("mongodb://localhost/playground")
+  .connect("mongodb://localhost/courses")
   .then(() => console.log("connected to monogo db"))
   .then((error) => console.log(error));
 
 // create schema with the help of mongoose
 const courseSchema = new mongoose.Schema({
-  name: String,
+  name: { type: String, required: true },
   author: String,
-  tags: [String],
+  tags: {
+    type: Array,
+    vlidated: {
+      validator: function (v) {
+        return v && v.length > 0;
+      },
+      message: "A course should have at least one tag",
+    },
+  },
   date: { type: Date, default: Date.now },
   isPublished: Boolean,
+  price: {
+    type: Number,
+    required: function () {
+      return this.isPublished;
+    },
+    min: 10,
+    max: 20,
+  },
 });
 
 // mongoose model
@@ -30,17 +46,21 @@ async function createCourse() {
     author: "Jo",
     tags: ["Angular", "Frontend"],
     isPublished: "true",
+    price: 20,
   });
-
-  const result = await course.save();
-  console.log(result);
+  try {
+    const result = await course.save();
+    console.log(result);
+  } catch (err) {
+    console.log(err.message);
+  }
 }
 
 // createCourse();
 
 // find data from the database
-async function getCourse() {
-  /* comparision operator
+
+/* comparision operator
     *eq(equal)
     *ne(not equal)
     *gt(greater than)
@@ -52,13 +72,13 @@ async function getCourse() {
 
   */
 
-  /* 
+/* 
     or and and method query data from db
     *or 
     *and
     */
 
-  /* 
+/* 
     pattern
 
     --- find anything that starts with the word.
@@ -76,15 +96,15 @@ async function getCourse() {
     --- find any word that contains the word anywhere.(case insensitive)
     find({author: /.*word*./i})
     */
-  /* count()
+/* count()
     return only number of documents that are matched with the queries
    */
-  /* 
+/* 
   for pagination
   skip()
     limit()
   */
- 
+
 /* async function getCourse() {
   return await Course.find({
     isPublished: true,
@@ -131,7 +151,7 @@ async function updateCourse(id) {
   console.log(result);
 }
 
-updateCourse("62f54dde19890424a2c73b7b");
+// updateCourse("62f54dde19890424a2c73b7b");
 
 /* async function run() {
   const courses = await getCourse();
@@ -139,9 +159,6 @@ updateCourse("62f54dde19890424a2c73b7b");
 } */
 
 // run();
-
-
-
 
 // import the routes
 const genres = require("./routes/api/genres");
