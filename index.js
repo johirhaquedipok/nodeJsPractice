@@ -24,6 +24,8 @@ const courseSchema = new mongoose.Schema({
       },
       message: "A course should have at least one tag",
     },
+    minlength: 3, // minlength for string validation
+    maxlength: 10, // maxlength for string validation
   },
   date: { type: Date, default: Date.now },
   isPublished: Boolean,
@@ -33,7 +35,12 @@ const courseSchema = new mongoose.Schema({
       return this.isPublished;
     },
     min: 10,
-    max: 20,
+    max: 20 /* min and max is for validating number */,
+  },
+  category: {
+    type: String,
+    // enum is for predefied field validation
+    enum: ["web", "mobile", "network"],
   },
 });
 
