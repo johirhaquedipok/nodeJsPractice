@@ -18,12 +18,27 @@ const courseSchema = new mongoose.Schema({
   author: String,
   tags: {
     type: Array,
+    // custom validator for validating array
+
     vlidated: {
       validator: function (v) {
         return v && v.length > 0;
       },
       message: "A course should have at least one tag",
     },
+    /*  // async validation
+       vlidated: {
+      // async validation(when the validator is depended on data that is coming from another source)
+      isAsync: true,
+      validator: function (v, callback) {
+        setTimeout(() => {
+          const result = v && v.length > 0;
+          callback(result);
+        }, 0);
+      },
+      message: "A course should have at least one tag",
+    },
+    */
     minlength: 3, // minlength for string validation
     maxlength: 10, // maxlength for string validation
   },
