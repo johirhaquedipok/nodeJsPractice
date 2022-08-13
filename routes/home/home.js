@@ -4,7 +4,10 @@ const router = express.Router();
 router.get("/", (req, res) => {
   // send file using pug. while using pug file use Render function
   /* rende takes two parameter.  the pug file name and second is object of pug files values */
-  res.render("index", { title: "my express pug file", message: "hello world" });
+  res.render("index", {
+    title: "my express pug file",
+    message: "hello world from pug",
+  });
 });
 
 module.exports = router;
